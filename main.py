@@ -12,9 +12,10 @@ class Game:
         self.lives = 3
         self.live_surf = pygame.image.load('./assets/player.png').convert_alpha()
         self.live_x_start_pos = screen_width - (self.live_surf.get_size()[0] * 2 + 20)
+        self.font = pygame.font.Font('./assets/space_invaders.ttf',20)
         
         self.aliens = pygame.sprite.Group()
-        self.alien_setup(rows = 6, cols = 8)
+        self.alien_setup(rows = 1, cols = 1)
         self.alien_direction = 1
         self.alien_lasers = pygame.sprite.Group()
         
@@ -76,7 +77,11 @@ class Game:
             x = self.live_x_start_pos + (live * (self.live_surf.get_size()[0] + 10))
             screen.blit(self.live_surf,(x,10))
 
-    
+    def victory_message(self):
+        if not self.aliens.sprites():
+            victory_surf = self.font.render('You won',False,'Green')
+            victory_rect = victory_surf.get_rect(center = (screen_width / 2, screen_height / 2))
+            screen.blit(victory_surf, victory_rect)
 
     def run(self):
         self.player.update()	
@@ -91,7 +96,7 @@ class Game:
         self.player.draw(screen)
         self.aliens.draw(screen)
         self.alien_lasers.draw(screen)
-
+        self.victory_message()
     
 
 if __name__ == '__main__':
