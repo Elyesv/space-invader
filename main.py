@@ -15,7 +15,7 @@ class Game:
         self.font = pygame.font.Font('./assets/space_invaders.ttf',20)
         
         self.aliens = pygame.sprite.Group()
-        self.alien_setup(rows = 1, cols = 1)
+        self.alien_setup(rows = 6, cols = 8)
         self.alien_direction = 1
         self.alien_lasers = pygame.sprite.Group()
         
@@ -62,15 +62,12 @@ class Game:
                     if pygame.sprite.spritecollide(laser,self.player,False):
                         laser.kill()
                         self.lives -= 1
-                        if self.lives <= 0:
-                            pygame.quit()
-                            sys.exit()
+                        
 
             if self.aliens:
                 for alien in self.aliens:
                     if pygame.sprite.spritecollide(alien,self.player,False):
-                        pygame.quit()
-                        sys.exit()
+                        self.lives = 0
 
     def display_lives(self):
         for live in range(self.lives - 1):
@@ -78,10 +75,19 @@ class Game:
             screen.blit(self.live_surf,(x,10))
 
     def victory_message(self):
-        if not self.aliens.sprites():
+        if not self.aliens.sprites() and self.lives >= 1:
             victory_surf = self.font.render('You won',False,'Green')
             victory_rect = victory_surf.get_rect(center = (screen_width / 2, screen_height / 2))
             screen.blit(victory_surf, victory_rect)
+
+    def lost_message(self):
+        if self.lives == 0:
+            self.aliens.empty()
+            self.alien_lasers.empty()
+            self.player.sprite.lasers.empty()
+            lost_surf = self.font.render('You lost',False,'Red')
+            lost_rect = lost_surf.get_rect(center = (screen_width / 2, screen_height / 2))
+            screen.blit(lost_surf, lost_rect)
 
     def run(self):
         self.player.update()	
@@ -97,6 +103,7 @@ class Game:
         self.aliens.draw(screen)
         self.alien_lasers.draw(screen)
         self.victory_message()
+        self.lost_message()
     
 
 if __name__ == '__main__':
